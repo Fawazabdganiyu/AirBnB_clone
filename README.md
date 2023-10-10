@@ -1,4 +1,5 @@
 # AirBnB_clone
+
 ## Description of the project.
 The goal of the project is to deploy on a server a simple copy of the
 [AirBnB website](https://www.airbnb.com/).
@@ -9,8 +10,6 @@ programming track will be implemented.
 At this stage, this project will compose of a command interpreter to manipulate
 data without a visual interface, like in a Shell (perfect for development and
 debugging).
-
-![Current scope of project is highlighted!](https://s3.amazonaws.com/alx-intranet.hbtn.io/uploads/medias/2018/6/815046647d23428a14ca.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARDDGGGOUSBVO6H7D%2F20231009%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20231009T113659Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=2c78be81c6a402af09a1c63d687b127cea43be70a732df9bfe8bf7b95c1991e7 "Project overview")
 
 ### Concepts used
 - [cmd module](https://intranet.alxswe.com/rltoken/8ecCwE6veBmm3Nppw4hz5A)
