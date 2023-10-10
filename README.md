@@ -67,7 +67,7 @@ EOF  help  quit
 $
 
 ```
-*And also in non-interactive mode: (like the Shell project in C)
+*And also in non-interactive mode: (like the Shell project in C)*
 ```bash
 
 $ echo "help" | ./console.py
