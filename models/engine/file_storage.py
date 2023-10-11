@@ -42,7 +42,7 @@ class FileStorage:
         filename = FileStorage.__file_path
         with open(filename, mode='w', encoding='utf-8') as f:
             # update with latest __dict__
-            to_dict = {k: str(obj) for k, obj in FileStorage.__objects.items()}
+            to_dict  = {k: str(obj) for k, obj in FileStorage.__objects.items()}
 
             json.dump(to_dict, f)
 
