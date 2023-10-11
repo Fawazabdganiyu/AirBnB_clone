@@ -1,20 +1,22 @@
 #!/usr/bin/python3
 """
-Module name: b_model
-Usage: This module is used to define a 'BaseModel' class as the parent
-class of all other classes defined in the program
+Module Name: models/base_model.py
+Description: This module defines a `BaseModel` class
+
 """
 import uuid
 from datetime import datetime
+import models
 
 
 class BaseModel:
     """ The parent class of all classes used in the program """
     def __init__(self, *args, **kwargs):
         """ The constructor
+        
         Args:
-            args: tuple containing ordered arguments
-            kwargs: dictionary containing keyworded arguments
+            *args (tuple): Variable number of ordered arguments
+            **kwargs (dictionary): keyworded arguments
 
         It assigns this parameters to attributes
 
@@ -31,6 +33,7 @@ class BaseModel:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
+            models.storage.new(self)
 
     def __str__(self):
         """ Returns an informal representation of instances """
@@ -41,6 +44,7 @@ class BaseModel:
         Saves the time when this method is being called.
         """
         self.updated_at = datetime.now()
+        models.storage.save()
 
     def to_dict(self):
         """ Returns the dictionary representation of an instance """
