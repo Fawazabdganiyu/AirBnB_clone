@@ -28,10 +28,9 @@ class BaseModel:
                         v = datetime.fromisoformat(v)
                     setattr(self, k, v)
         else:
-           self.id = str(uuid.uuid4())
-           self.created_at = datetime.now()
-           self.updated_at = datetime.now()
-           storage.new(self.__dict__)
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
 
     def __str__(self):
         """ Returns an informal representation of instances """
