@@ -28,12 +28,9 @@ class BaseModel:
         if kwargs:
             for k, v in kwargs.items():
                 if k in self.to_dict().keys() and k != '__class__':
-                    if k == 'created_at':
-                        self.created_at = datetime.fromisoformat(v)
-                    elif k == 'updated_at':
-                        self.updated_at = datetime.fromisoformat(v)
-                    else:
-                        setattr(self, k, v)
+                    if k == 'created_at' or k == 'updated_at':
+                        v = datetime.fromisoformat(v)
+                    setattr(self, k, v)
 
     def __str__(self):
         """ Returns an informal representation of instances """
