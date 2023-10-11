@@ -7,6 +7,8 @@ command interpreter.
 """
 import cmd
 from models.base_model import BaseModel
+from models import storage
+
 
 class HBNBCommand(cmd.Cmd):
     """A definition of `HBNBCommand` class inherited from `Cmd`
@@ -17,17 +19,6 @@ class HBNBCommand(cmd.Cmd):
 
     """
     prompt = "(hbnb) "
-
-    def precmd(self, line):
-        """Overrides to separate the `line` argument based on it spaces
-
-        Return (list):
-            A list of arguments passed to the program
-
-        """
-        args = line.split(' ')
-
-        return cmd.Cmd.precmd(self, args)
 
     def do_quit(self, line):
         """quits the interpreter on receiving `quit` command"""
@@ -50,11 +41,12 @@ class HBNBCommand(cmd.Cmd):
         saves it (to the JSON file) and prints the id
 
         """
-        if len(line) == 0:
+        args = line.split()
+        if len(args) == 0:
             print("** class name missing **")
-        if line[0] != "BaseModel":
+        elif args[0] != "BaseModel":
             print("** class doesn't exist **")
-
+        else:
             # Create the expected instance
             obj = BaseModel()
             obj.save()
@@ -65,31 +57,19 @@ class HBNBCommand(cmd.Cmd):
         based on the class name and `id`.
 
         """
-        if len(line) == 0:
+        args = line.split()
+        all_objs = storage.all()
+
+        if len(args) == 0:
             print("** class name missing **")
-        if line[0] != "BaseModel":
+        elif args[0] != "BaseModel":
             print("** class doesn't exist **")
-        if line[1] == None:
+        elif len(args) == 1:
             print("** instance id missing **")
-
-        search = f"BaseMode.{line[1]}"
-        found = 0
-        try:
-            with open("file.json", mode='r', encoding='utf-8') as f:
-                objs_dict = json.load(f)
-
-            # Search the dict generated from file.json
-            for k in objs_dict.keys():
-                if k == search:
-                    found = 1
-                    obj_attr = objs_dict[k]
-                    obj = BaseModel(**objs_attr)
-                    print(obj)
-                else:
-                    found = 0
-
-            if found = 0:
-                print("** no instance found **")
+        elif f"BaseModel.{args[1]}" not in all_objs.keys():
+            print("** no instance found **")
+        else:
+            print(all_objs[f"BaseModel.{args[1]}"])
 
 
 if __name__ == '__main__':
