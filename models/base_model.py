@@ -4,9 +4,9 @@ Module Name: models/base_model.py
 Description: This module defines a `BaseModel` class
 
 """
-import uuid
 from datetime import datetime
-from models import storage
+import models
+import uuid
 
 
 class BaseModel:
@@ -33,7 +33,7 @@ class BaseModel:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
-            storage.new(self)
+            models.storage.new(self)
 
     def __str__(self):
         """ Returns an informal representation of instances """
@@ -45,7 +45,7 @@ class BaseModel:
         with the current datetime of updation.
         """
         self.updated_at = datetime.now()
-        storage.save()  # Save the updated objects
+        models.storage.save()  # Save the updated objects
 
     def to_dict(self):
         """ Returns the dictionary representation of an instance """

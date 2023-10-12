@@ -7,12 +7,13 @@ Description: This module provides a `FileStorage` class
 
              This module defines a class 'FileStorage' which is a child-class
              of the 'BaseModel class'.
-             It is used in handling the process of saving objects to 
+             It is used in handling the process of saving objects to
              a file DataBase(JSON) file
              and retrieving of objects from that file for processing.
 """
-from os import path
 import json
+from models.base_model import BaseModel
+from os import path
 
 
 class FileStorage:
@@ -29,7 +30,7 @@ class FileStorage:
         objects (dict): A private class attribute that stores  all objects by
                         <class name>.id (ex: to store a BaseModel object
                         id=12121212, the key will be BaseModel.12121212).
-                        
+
         It also contains processor methods. Such as:
         all(self): returns the dictionary '__objects'
         new(self, obj): sets a new object into the '__objects' dictionary
@@ -56,7 +57,7 @@ class FileStorage:
         '__file_path'
         """
         key = obj.__class__.__name__ + '.' + obj.id   # <obj class name>.id
-        
+
         # Set in the new object with key: 'key'
         FileStorage.__objects[key] = obj
 
@@ -80,8 +81,6 @@ class FileStorage:
         Deserializes the __file_path -> JSON file into '__objects' dictionary
         and back into objects again
         """
-        from models.base_model import BaseModel
-
         filename = FileStorage.__file_path
         # Make sure the file exist
         if path.exists(filename):
