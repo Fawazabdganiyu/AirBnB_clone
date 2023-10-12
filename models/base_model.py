@@ -13,7 +13,7 @@ class BaseModel:
     """ The parent class of all classes used in the program """
     def __init__(self, *args, **kwargs):
         """ The constructor
-        
+
         Args:
             *args (tuple): Variable number of ordered arguments
             **kwargs (dictionary): keyworded arguments
@@ -37,7 +37,7 @@ class BaseModel:
 
     def __str__(self):
         """ Returns an informal representation of instances """
-        return f"[BaseModel] ({self.id}) {self.__dict__}"
+        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
     def save(self):
         """
