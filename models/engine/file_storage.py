@@ -6,8 +6,9 @@ Description: This module provides a `FileStorage` class
 
 """
 import json
-from os import path
 from models.base_model import BaseModel
+from models.user import User
+from os import path
 
 
 class FileStorage:
@@ -62,22 +63,26 @@ class FileStorage:
         """
         filename = FileStorage.__file_path
         # Make sure the file exist
-        if path.exists(filename):
-            # Read and deserialise the file content
-            # ({ <obj class name>.id: { Attribute1: value1, ... } })
-            # for each BaseModel instance stored.
-            with open(filename, mode='r', encoding='utf-8') as f:
-                obj_dict = json.load(f)
+        if not path.exists(filename):
+            return
+        # Read and deserialise the file content
+        # ({ <obj class name>.id: { Attribute1: value1, ... } })
+        # for each BaseModel instance stored.
+        with open(filename, mode='r', encoding='utf-8') as f:
+            obj_dict = json.load(f)
 
-                # Make a dict to store <obj class name>.id=obj - key=value
-                objs_dict = {}
-                for k, v in obj_dict.items():
-                    # Recreate the BaseModel instances from
-                    # the saved dict values as `obj`
-                    obj = BaseModel(**v)
-                    # Update `objs_dict` to hold `<obj class name>.id=obj` pair
-                    objs_dict[k] = obj
+        # Make a dict to store <obj class name>.id=obj ==> key=value
+        objs_dict = {}
+        for k, v in obj_dict.items():
+            # Recreate the BaseModel instances from
+            # the saved dict values as `obj`
+            class_name = v['__class__']
 
-            # Assign the dict of recreated instances
-            # to the private class instance `objects`.
-            FileStorage.__objects = objs_dict
+            # Get the value of the expected class name from the global scope
+            obj = globals()[class_name](**v) # obj = __class__(**v)
+            # Update `objs_dict` to hold `<obj class name>.id=obj` pair
+            objs_dict[k] = obj
+
+        # Assign the dict of recreated instances
+        # to the private class instance `objects`.
+        FileStorage.__objects = objs_dict
