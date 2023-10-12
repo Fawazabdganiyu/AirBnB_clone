@@ -11,9 +11,9 @@ Description: This module provides a `FileStorage` class
              a file DataBase(JSON) file
              and retrieving of objects from that file for processing.
 """
-from models.base_model import BaseModel
 from os import path
 import json
+
 
 class FileStorage:
     """A definition of `FileStorage` class for serialization/deserialization.
@@ -80,6 +80,8 @@ class FileStorage:
         Deserializes the __file_path -> JSON file into '__objects' dictionary
         and back into objects again
         """
+        from models.base_model import BaseModel
+
         filename = FileStorage.__file_path
         # Make sure the file exist
         if path.exists(filename):
