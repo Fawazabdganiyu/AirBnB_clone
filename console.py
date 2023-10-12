@@ -5,9 +5,9 @@ Description: This is a program and it contains the entry point of the
 command interpreter.
 
 """
+import cmd
 from models import storage
 from models.base_model import BaseModel
-import cmd
 
 
 class HBNBCommand(cmd.Cmd):
@@ -25,7 +25,7 @@ class HBNBCommand(cmd.Cmd):
         return True
 
     def help_quit(self):
-        """displays custom quide for command `quit`"""
+        """displays custom guide for command `quit`"""
         print("Quit command to exit the program\n")
 
     def do_EOF(self, line):
@@ -44,10 +44,9 @@ class HBNBCommand(cmd.Cmd):
             `(hbnb) create BaseModel`
 
         """
-        args = line.split()
-        if len(args) == 0:
+        if line == '':
             print("** class name missing **")
-        elif args[0] != "BaseModel":
+        elif line != "BaseModel":
             print("** class doesn't exist **")
         else:
             # Create the expected instance
