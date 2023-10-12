@@ -4,9 +4,9 @@ Module Name: models/base_model.py
 Description: This module defines a `BaseModel` class
 
 """
-import uuid
 from datetime import datetime
 import models
+import uuid
 
 
 class BaseModel:
@@ -41,10 +41,11 @@ class BaseModel:
 
     def save(self):
         """
-        Saves the time when this method is being called.
+        Updates objects and the public instance attribute `updated_at`
+        with the current datetime of updation.
         """
         self.updated_at = datetime.now()
-        models.storage.save()
+        models.storage.save()  # Save the updated objects
 
     def to_dict(self):
         """ Returns the dictionary representation of an instance """

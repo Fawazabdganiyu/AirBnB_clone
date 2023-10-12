@@ -1,9 +1,15 @@
+#!/usr/bin/python3
 """
 Module Name: models/engine/file_storage.py
 Description: This module provides a `FileStorage` class
              that serializes instances to a JSON file and
              deserializes JSON file to instances.
 
+             This module defines a class 'FileStorage' which is a child-class
+             of the 'BaseModel class'.
+             It is used in handling the process of saving objects to
+             a file DataBase(JSON) file
+             and retrieving of objects from that file for processing.
 """
 import json
 from models.amenity import Amenity
@@ -30,25 +36,43 @@ class FileStorage:
                         <class name>.id (ex: to store a BaseModel object
                         id=12121212, the key will be BaseModel.12121212).
 
+        It also contains processor methods. Such as:
+        all(self): returns the dictionary '__objects'
+        new(self, obj): sets a new object into the '__objects' dictionary
+                        with key as '<obj class_name>.id'
+        save(self): serializes all the objects stored in '__objects' into
+                    a JSON string and saves them in the file specified
+                    by __file_path
+        reload(self): deserializes all objects stored in JSON file into
+                      objects and saves them in '__objects' dictionary
+                      for processing
+
     """
     __file_path = "file.json"
     __objects = {}
 
     def all(self):
-        """returns the dictionary __objects
+        """
+        Returns the dictionary: '__objects' class attribute
         """
         return FileStorage.__objects
 
     def new(self, obj):
-        """sets in `__objects` the `obj` with key `<obj class name>.id`
         """
-        obj_class = obj.__class__.__name__
-        key = str(obj_class) + "." + obj.id  # <obj class name>.id
+        sets in __objects the obj with key <obj class name>.id
+        """
+        key = obj.__class__.__name__ + '.' + obj.id   # <obj class name>.id
 
-        FileStorage.__objects.update({key: obj})
+        # Set in the new object with key: 'key'
+        FileStorage.__objects[key] = obj
 
     def save(self):
         """serializes `__objects` to the JSON file (path: `__file_path`)
+
+        Serializes all the objects stored in '__objects' into a dict then to
+        JSON string and finally saves them to JSON file specified as
+        the class attribute:
+        '__file_path'
         """
         filename = FileStorage.__file_path
 
@@ -63,7 +87,9 @@ class FileStorage:
             json.dump(obj_dict, f)
 
     def reload(self):
-        """Deserializes the JSON file to `__objects`.
+        """
+        Deserializes the __file_path -> JSON file into '__objects' dictionary
+        and back into objects again.
 
         Read and deserialise the file content with the format,
         ({ <class name>.id: { Attr: value, ... }, ...})
