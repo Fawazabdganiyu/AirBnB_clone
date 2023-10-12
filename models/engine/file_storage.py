@@ -79,7 +79,7 @@ class FileStorage:
             class_name = v['__class__']
 
             # Get the value of the expected class name from the global scope
-            obj = globals()[class_name](**v) # obj = __class__(**v)
+            obj = globals()[class_name](**v)  # obj = __class__(**v)
             # Update `objs_dict` to hold `<obj class name>.id=obj` pair
             objs_dict[k] = obj
 
