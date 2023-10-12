@@ -6,8 +6,12 @@ Description: This module provides a `FileStorage` class
 
 """
 import json
+from models.amenity import Amenity
 from models.base_model import BaseModel
+from models.city import City
 from models.user import User
+from models.review import Review
+from models.state import State
 from os import path
 
 
@@ -59,30 +63,31 @@ class FileStorage:
             json.dump(obj_dict, f)
 
     def reload(self):
-        """deserializes the JSON file to `__objects`.
+        """Deserializes the JSON file to `__objects`.
+
+        Read and deserialise the file content with the format,
+        ({ <class name>.id: { Attr: value, ... }, ...})
+        Then this is used to re-create each instance found in this file
+
         """
         filename = FileStorage.__file_path
         # Make sure the file exist
         if not path.exists(filename):
             return
-        # Read and deserialise the file content
-        # ({ <obj class name>.id: { Attribute1: value1, ... } })
-        # for each BaseModel instance stored.
+        # Get the file content
         with open(filename, mode='r', encoding='utf-8') as f:
             obj_dict = json.load(f)
 
         # Make a dict to store <obj class name>.id=obj ==> key=value
         objs_dict = {}
         for k, v in obj_dict.items():
-            # Recreate the BaseModel instances from
-            # the saved dict values as `obj`
+            # Get the class name
             class_name = v['__class__']
-
-            # Get the value of the expected class name from the global scope
+            # Re-create an object with keyword arguments using the appropriate
+            # class name from the global scope.
             obj = globals()[class_name](**v)  # obj = __class__(**v)
             # Update `objs_dict` to hold `<obj class name>.id=obj` pair
             objs_dict[k] = obj
 
-        # Assign the dict of recreated instances
-        # to the private class instance `objects`.
+        # Make the objs available to the `FileStorage` class
         FileStorage.__objects = objs_dict
