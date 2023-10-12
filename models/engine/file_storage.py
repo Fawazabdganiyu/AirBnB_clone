@@ -8,7 +8,6 @@ Description: This module defines a class 'FileStorage' which is a child-class
              and retrieving of objects from that file for processing.
 """
 import json
-from models.base_model import BaseModel
 
 
 class FileStorage:
@@ -39,7 +38,7 @@ class FileStorage:
         """
         Returns the dictionary: '__objects' class attribute
         """
-        return self.__objects
+        return FileStorage.__objects
 
     def new(self, obj):
         """
@@ -48,30 +47,38 @@ class FileStorage:
         key = obj.__class__.__name__ + '.' + obj.id   # <CLASS_NAME>.ID
 
         # Set in the new object with key: 'key'
-        __objects[key] = obj
+        FileStorage.__objects[key] = obj
 
     def save(self):
         """
-        Serializes all the objects stored in '__objects' into a JSON string
-        and saves them to JSON file specified as the class attribute:
+        Serializes all the objects stored in '__objects' into a dict then to
+        JSON string and finally saves them to JSON file specified as the class attribute:
         '__file_path'
         """
         # Get a copy of __objects
         objects_copy = FileStorage.__objects
 
-        # Change each object in __objects into it's dictionary representation
-        for key, obj in objects_copy.items():
-            obj_dict = obj.to_dict()
-            objects_copy[key] = obj_dict
+        # Convert objects to their dict representation for saving
+        for key_id, obj in objects_copy.items():
+            objects_copy[key_id] = obj.to_dict()
 
         # Open file and store the JSON string representation into file
-        with open((FileStorage.__file_path, 'w')) as FILE:
-            json.dump(FILE, objects_copy)
+        with open(FileStorage.__file_path, 'w') as FILE:
+            json.dump(objects_copy, FILE)
 
     def reload(self):
         """
         Deserializes the __file_path -> JSON file into '__objects' dictionary
+        and back into objects again
         """
-        if self.__file_path:
-            with open(self.__file_path) as FILE:  # Defaults to read
-                self.__objects = json.load(FILE)
+        from models.base_model import BaseModel
+
+        try:
+            with open(FileStorage.__file_path) as FILE:  # Defaults to read
+                # It comes out as dict containing dict-representation of objects
+                FileStorage.__objects = json.load(FILE)
+        except Exception:
+            pass
+        finally:  # Therefore we convert them back into objects
+            for key_id, obj_dict in FileStorage.__objects.items():
+                FileStorage.__objects[key_id] = BaseModel(**obj_dict)
