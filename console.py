@@ -126,10 +126,11 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, line):
         """Update the value of an Instance attribute
 
-        SYPNOSIS:
-            update <class_name> <obj_id> <attr_name> <attr_value>
-        Example:
-            `(hbnb) update BaseModel 1234-1234 email "airbnb@mail"`
+    SYPNOSIS:
+        update <class_name> <obj_id> <attr_name> <attr_value>
+
+    Example:
+        `(hbnb) update BaseModel 1234-1234 email "airbnb@mail"`
         """
         # Default values to track validity
         class_name = ""
