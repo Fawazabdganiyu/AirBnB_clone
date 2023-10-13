@@ -4,12 +4,6 @@ Module Name: models/engine/file_storage.py
 Description: This module provides a `FileStorage` class
              that serializes instances to a JSON file and
              deserializes JSON file to instances.
-
-             This module defines a class 'FileStorage' which is a child-class
-             of the 'BaseModel class'.
-             It is used in handling the process of saving objects to
-             a file DataBase(JSON) file
-             and retrieving of objects from that file for processing.
 """
 import json
 from models.amenity import Amenity
@@ -60,15 +54,14 @@ class FileStorage:
 
     def new(self, obj):
         """
-        sets in __objects the obj with key <obj class name>.id
+        Sets in `__objects` the new `obj` with key `<obj class name>.id`
         """
         key = obj.__class__.__name__ + '.' + obj.id   # <obj class name>.id
 
-        # Set in the new object with key: 'key'
-        FileStorage.__objects[key] = obj
+        FileStorage.__objects.update({key: obj})
 
     def save(self):
-        """serializes `__objects` to the JSON file (path: `__file_path`)
+        """Serializes `__objects` to the JSON file (path: `__file_path`)
 
         Serializes all the objects stored in '__objects' into a dict then to
         JSON string and finally saves them to JSON file specified as

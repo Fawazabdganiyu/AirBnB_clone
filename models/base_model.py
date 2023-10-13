@@ -13,7 +13,6 @@ class BaseModel:
     """ The parent class of all classes used in the program """
     def __init__(self, *args, **kwargs):
         """ The constructor
-
         Args:
             *args (tuple): Variable number of ordered arguments
             **kwargs (dictionary): keyworded arguments
@@ -44,8 +43,10 @@ class BaseModel:
         Updates objects and the public instance attribute `updated_at`
         with the current datetime of updation.
         """
+        # Save the created/updated objects
+        models.storage.save()
+        # Get the time of updation
         self.updated_at = datetime.now()
-        models.storage.save()  # Save the updated objects
 
     def to_dict(self):
         """ Returns the dictionary representation of an instance """
