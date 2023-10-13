@@ -36,7 +36,7 @@ class BaseModel:
 
     def __str__(self):
         """ Returns an informal representation of instances """
-        return f"[BaseModel] ({self.id}) {self.__dict__}"
+        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
     def save(self):
         """

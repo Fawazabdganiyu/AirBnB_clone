@@ -183,6 +183,5 @@ class HBNBCommand(cmd.Cmd):
             # Update/set the attribute with the new value
             setattr(obj, attr_name, attr_value)
 
-
 if __name__ == '__main__':
     HBNBCommand().cmdloop()

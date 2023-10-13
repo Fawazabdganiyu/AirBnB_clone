@@ -6,7 +6,13 @@ Description: This module provides a `FileStorage` class
              deserializes JSON file to instances.
 """
 import json
+from models.amenity import Amenity
 from models.base_model import BaseModel
+from models.city import City
+from models.user import User
+from models.review import Review
+from models.state import State
+from models.place import Place
 from os import path
 
 
@@ -30,9 +36,11 @@ class FileStorage:
         new(self, obj): sets a new object into the '__objects' dictionary
                         with key as '<obj class_name>.id'
         save(self): serializes all the objects stored in '__objects' into
-                    a JSON string and saves them in the FILE specified by __file_path
+                    a JSON string and saves them in the file specified
+                    by __file_path
         reload(self): deserializes all objects stored in JSON file into
-                      objects and saves them in '__objects' dictionary for processing
+                      objects and saves them in '__objects' dictionary
+                      for processing
 
     """
     __file_path = "file.json"
@@ -45,15 +53,20 @@ class FileStorage:
         return FileStorage.__objects
 
     def new(self, obj):
-        """Sets in `__objects` the new `obj` with key `<obj class name>.id`
         """
-        obj_class = obj.__class__.__name__
-        key = obj_class + "." + obj.id  # <obj class name>.id
+        Sets in `__objects` the new `obj` with key `<obj class name>.id`
+        """
+        key = obj.__class__.__name__ + '.' + obj.id   # <obj class name>.id
 
         FileStorage.__objects.update({key: obj})
 
     def save(self):
         """Serializes `__objects` to the JSON file (path: `__file_path`)
+
+        Serializes all the objects stored in '__objects' into a dict then to
+        JSON string and finally saves them to JSON file specified as
+        the class attribute:
+        '__file_path'
         """
         filename = FileStorage.__file_path
 
@@ -70,26 +83,31 @@ class FileStorage:
     def reload(self):
         """
         Deserializes the __file_path -> JSON file into '__objects' dictionary
-        and back into objects again
+        and back into objects again.
+
+        Read and deserialise the file content with the format,
+        ({ <class name>.id: { Attr: value, ... }, ...})
+        Then this is used to re-create each instance found in this file
+
         """
         filename = FileStorage.__file_path
         # Make sure the file exist
-        if path.exists(filename):
-            # Read and deserialise the file content
-            # ({ <obj class name>.id: { Attribute1: value1, ... } })
-            # for each BaseModel instance stored.
-            with open(filename, mode='r', encoding='utf-8') as f:
-                obj_dict = json.load(f)
+        if not path.exists(filename):
+            return
+        # Get the file content
+        with open(filename, mode='r', encoding='utf-8') as f:
+            obj_dict = json.load(f)
 
-                # Make a dict to store <obj class name>.id=obj - key=value
-                objs_dict = {}
-                for k, v in obj_dict.items():
-                    # Recreate the BaseModel instances from
-                    # the saved dict values as `obj`
-                    obj = BaseModel(**v)
-                    # Update `objs_dict` to hold `<obj class name>.id=obj` pair
-                    objs_dict[k] = obj
+        # Make a dict to store <obj class name>.id=obj ==> key=value
+        objs_dict = {}
+        for k, v in obj_dict.items():
+            # Get the class name
+            class_name = v['__class__']
+            # Re-create an object with keyword arguments using the appropriate
+            # class name from the global scope.
+            obj = globals()[class_name](**v)  # obj = __class__(**v)
+            # Update `objs_dict` to hold `<obj class name>.id=obj` pair
+            objs_dict[k] = obj
 
-            # Assign the dict of recreated instances
-            # to the private class instance `objects`.
-            FileStorage.__objects = objs_dict
+        # Make the objs available to the `FileStorage` class
+        FileStorage.__objects = objs_dict
