@@ -6,8 +6,14 @@ command interpreter.
 
 """
 import cmd
+import shlex
 from models import storage
 from models.base_model import BaseModel
+from models.user import User
+from models.state import State
+from models.city import City
+from models.place import Place
+from models.amenity import Amenity
 
 
 class HBNBCommand(cmd.Cmd):
@@ -20,6 +26,10 @@ class HBNBCommand(cmd.Cmd):
     """
     prompt = "(hbnb) "
 
+    # List of classes
+    __class_list = ["BaseModel", "User", "State", "City", "Place",
+                    "Amenity", "Review"]
+
     def do_quit(self, line):
         """Quit the interpreter on receiving `quit` command"""
         return True
@@ -30,6 +40,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_EOF(self, line):
         """Exit the program on receiving EOF signal"""
+        print()
         return True
 
     def emptyline(self):
@@ -44,13 +55,16 @@ class HBNBCommand(cmd.Cmd):
             `(hbnb) create BaseModel`
 
         """
-        if line == '':
+        class_list = HBNBCommand.__class_list
+        class_name = line
+
+        if class_name == "":
             print("** class name missing **")
-        elif line != "BaseModel":
+        elif class_name not in class_list:
             print("** class doesn't exist **")
         else:
             # Create the expected instance
-            obj = BaseModel()
+            obj = globals()[class_name]()
             obj.save()
             print(f"{obj.id}")
 
@@ -62,21 +76,33 @@ class HBNBCommand(cmd.Cmd):
             `(hbnb) show BaseModel 1234-1234-1234`
 
         """
-        args = line.split()
-
         # Get objects dictionary in the form { <BaseModel.id>=<obj>,... }
         all_objs = storage.all()
+        # List of available object classes
+        class_list = HBNBCommand.__class_list
 
-        if len(args) == 0:
+        obj_class_name = ""
+        obj_id = ""
+
+        args = line.split()
+        args_num = len(args)
+
+        if args_num >= 1:
+            obj_class_name = args[0]
+        if args_num == 2:
+            obj_id = args[1]
+
+        if obj_class_name == "":
             print("** class name missing **")
-        elif args[0] != "BaseModel":
+        elif obj_class_name not in class_list:
             print("** class doesn't exist **")
-        elif len(args) == 1:
+
+        elif obj_id == "":
             print("** instance id missing **")
-        elif f"BaseModel.{args[1]}" not in all_objs.keys():
+        elif f"{obj_class_name}.{obj_id}" not in all_objs.keys():
             print("** no instance found **")
         else:
-            print(all_objs[f"BaseModel.{args[1]}"])
+            print(all_objs[f"{obj_class_name}.{obj_id}"])
 
     def do_destroy(self, line):
         """Deletes an instance based on the class name and
@@ -86,21 +112,33 @@ class HBNBCommand(cmd.Cmd):
             `(hbnb) destroy BaseModel 1234-1234-1234`
 
         """
-        args = line.split()
-
         # Get objects dictionary in the form { <BaseModel.id>=<obj>,... }
         all_objs = storage.all()
 
-        if len(args) == 0:
+        # List of object classes
+        class_list = HBNBCommand.__class_list
+
+        args = line.split()
+        args_num = len(args)
+
+        obj_class_name = ""
+        obj_id = ""
+
+        if args_num >= 1:
+            obj_class_name = args[0]
+        if args_num == 2:
+            obj_id = args[1]
+
+        if obj_class_name == "":
             print("** class name missing **")
-        elif args[0] != "BaseModel":
+        elif obj_class_name not in class_list:
             print("** class doesn't exist **")
-        elif len(args) == 1:
+        elif obj_id == "":
             print("** instance id missing **")
-        elif f"BaseModel.{args[1]}" not in all_objs.keys():
+        elif f"{obj_class_name}.{obj_id}" not in all_objs.keys():
             print("** no instance found **")
         else:
-            del all_objs[f"BaseModel.{args[1]}"]
+            del all_objs[f"{obj_class_name}.{obj_id}"]
             storage.save()
 
     def do_all(self, line):
@@ -108,18 +146,36 @@ class HBNBCommand(cmd.Cmd):
         based or not on the class name
 
         Example:
-           `(hbnb) all BaseModel` or
+           `(hbnb) all BaseModel` or all User
            `(hbnb) all`
 
         """
-        args = line.split()
         # Get objects dictionary in the form { <BaseModel.id>=<obj>,... }
         all_objs = storage.all()
 
-        if len(args) == 0 or (len(args) == 1 and args[0] == "BaseModel"):
-            # Represent all instances in a list
-            all_objs_list = [str(v) for v in all_objs.values()]
+        # List of available object classes
+        class_list = HBNBCommand.__class_list
+
+        class_name = ""
+
+        args = line.split()
+        args_num = len(args)
+
+        if args_num == 1:
+            class_name = args[0]
+
+        # If the class name is missing, prints all objects of all classes
+        if class_name == "":
+            all_objs_list = [str(obj) for obj in all_objs.values()]
             print(all_objs_list)
+
+        # If the class name exist, prints all objects that belong to class name
+        elif class_name in class_list:
+            class_objs_list = [str(obj) for obj in all_objs.values()
+                               if obj.__class__.__name__ == class_name]
+            print(class_objs_list)
+
+        # Otherwise, it is an invalid class
         else:
             print("** class doesn't exist **")
 
@@ -139,12 +195,14 @@ class HBNBCommand(cmd.Cmd):
         attr_value = ""
         obj = ""
 
-        # List of available classes and objects in that class
-        class_list = ["BaseModel"]
-        all_obj = storage.all()
+        # List of available objects classes
+        class_list = HBNBCommand.__class_list
+
+        # Dictionary containing all objects of all classes
+        all_objs = storage.all()
 
         # Get list of arguments passed
-        args = line.split()
+        args = shlex.split(line)
         args_num = len(args)
 
         # Assignment
@@ -167,7 +225,7 @@ class HBNBCommand(cmd.Cmd):
 
         elif obj_id == "":
             print("** instance id missing **")
-        elif obj_key not in all_obj.keys():
+        elif obj_key not in all_objs.keys():
             print("** no instance found **")
 
         elif attr_name == "":
@@ -178,10 +236,22 @@ class HBNBCommand(cmd.Cmd):
         # Updation
         else:
             # object information
-            obj = all_obj[obj_key]
+            obj = all_objs[obj_key]
+
+            # Test for string
+            if attr_value.isalpha():
+                pass
+            # Test for integers
+            elif attr_value.isdecimal():
+                attr_value = int(attr_value)
+            # Test for floats
+            else:
+                attr_value = float(attr_value)
 
             # Update/set the attribute with the new value
             setattr(obj, attr_name, attr_value)
+            obj.save()
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
