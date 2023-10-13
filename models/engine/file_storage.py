@@ -1,13 +1,13 @@
+#!/usr/bin/python3
 """
 Module Name: models/engine/file_storage.py
 Description: This module provides a `FileStorage` class
              that serializes instances to a JSON file and
              deserializes JSON file to instances.
-
 """
 import json
-from os import path
 from models.base_model import BaseModel
+from os import path
 
 
 class FileStorage:
@@ -25,25 +25,35 @@ class FileStorage:
                         <class name>.id (ex: to store a BaseModel object
                         id=12121212, the key will be BaseModel.12121212).
 
+        It also contains processor methods. Such as:
+        all(self): returns the dictionary '__objects'
+        new(self, obj): sets a new object into the '__objects' dictionary
+                        with key as '<obj class_name>.id'
+        save(self): serializes all the objects stored in '__objects' into
+                    a JSON string and saves them in the FILE specified by __file_path
+        reload(self): deserializes all objects stored in JSON file into
+                      objects and saves them in '__objects' dictionary for processing
+
     """
     __file_path = "file.json"
     __objects = {}
 
     def all(self):
-        """returns the dictionary __objects
+        """
+        Returns the dictionary: '__objects' class attribute
         """
         return FileStorage.__objects
 
     def new(self, obj):
-        """sets in `__objects` the `obj` with key `<obj class name>.id`
+        """Sets in `__objects` the new `obj` with key `<obj class name>.id`
         """
         obj_class = obj.__class__.__name__
-        key = str(obj_class) + "." + obj.id  # <obj class name>.id
+        key = obj_class + "." + obj.id  # <obj class name>.id
 
         FileStorage.__objects.update({key: obj})
 
     def save(self):
-        """serializes `__objects` to the JSON file (path: `__file_path`)
+        """Serializes `__objects` to the JSON file (path: `__file_path`)
         """
         filename = FileStorage.__file_path
 
@@ -58,7 +68,9 @@ class FileStorage:
             json.dump(obj_dict, f)
 
     def reload(self):
-        """deserializes the JSON file to `__objects`.
+        """
+        Deserializes the __file_path -> JSON file into '__objects' dictionary
+        and back into objects again
         """
         filename = FileStorage.__file_path
         # Make sure the file exist
