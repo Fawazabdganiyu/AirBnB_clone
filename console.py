@@ -276,11 +276,13 @@ class HBNBCommand(cmd.Cmd):
         # Define the available methods
         method_list = ["all", "count", "show", "destroy", "update"]
 
-        # Assign the needed variables
+        #--------------Initialisations------------------
+        # Initialise the needed variables
         class_name = ""
         obj_id = ""
         attr_key = ""
         attr_value = ""
+        args = ""
 
         # ----------Parsing-------------
         # Get the class name, the method and the passed argument(s) if any
@@ -289,14 +291,14 @@ class HBNBCommand(cmd.Cmd):
         else:
             return super().default(line)
 
-        method = re.findall(r'(^.+)\(', method_args)
+        method = re.findall(r'(^.+?)\(', method_args)
         # Get method as string
         if method:
             method = method[0]
         else:
             return super().default(line)
 
-        args_in_list = re.findall(r'\((.+)\)', method_args)
+        args_in_list = re.findall(r'\((.+?)\)', method_args)
         # Get the arguments in the return list as a set of strings
         arg_len = len(args_in_list)
         if arg_len != 0:
@@ -308,14 +310,7 @@ class HBNBCommand(cmd.Cmd):
             print(args)
             print(args_num)
 
-        if args_num >= 3:
-            attr_key = args[1].replace('"', "")
-            attr_value = args[2].replace('"', "")
-        if args_num > 3:
-            # Extract the dictionary
-            update_dict = re.findall(r'', )
-
-        if method in ("show", "destroy") and arg_len != 0:
+        if args_num >= 1:
             obj_id = args[0].replace('"', "")
 
 
@@ -329,22 +324,48 @@ class HBNBCommand(cmd.Cmd):
                 args = f'{class_name} {obj_id}'
                 #else:
                     #args = f'{class_name}'
-                self.do_show(args)
+                if method == "show":
+                    self.do_show(args)
+                else:
+                    self.do_destroy(args)
             elif method == "update":
-                turns = args_num - 1
-                while(turns <= args_num and index <= args_num):
+                update_dict_list = re.findall(r'\{(.+?)\}', method_args)
+                if update_dict_list:
+                    update_dict = update_dict_list[0]
+                    print(update_dict)
+                    # Split the content of the dictionary by key/value
+                    update_dict = update_dict.split(",")
+                    print(update_dict)
+                    # Get the number of attributes in the dict
+                    dict_len = len(update_dict)
+
+                    turn = dict_len
+                    index = 0
+                    while(turn > 0 and index < dict_len):
+                        # Get the key-value pair
+                        key_value = update_dict[index]
+                        # Split them
+                        key_value = key_value.split(": ")
+
+                        key = key_value[0]
+                        value = key_value[1]
+
+                        attr_key = key.replace("'", "")
+                        attr_value = value.replace("'", "")
+
+                        args = f'{class_name} {obj_id} {attr_key} {attr_value}'
+                        self.do_update(args)
+                        turn -= 1
+                        index += 1
+                else:
+                    if len(args) >= 2:
+                        attr_key = args[1].replace("'", "")
+                    if len(args) >= 3:
+                        attr_value = args[2].replace("'", "")
                     args = f'{class_name} {obj_id} {attr_key} {attr_value}'
                     self.do_update(args)
-                    try:
-                        attr_key = args[index].replace('"', "")
-                        index += 1
-                        attr_value = args[index].replace('"', "")
-                        index += 1
-                        turns += 2
-                    except IndexError:
-                        pass
-                else:
-                    super().default(line)
+            else:
+                super().default(line)
 
 
 if __name__ == '__main__':
