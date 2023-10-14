@@ -249,7 +249,6 @@ class HBNBCommand(cmd.Cmd):
             setattr(obj, attr_name, attr_value)
             obj.save()
 
-
     def do_count(self, line):
         """
         Counts the number of objects that is present in storage
@@ -273,10 +272,7 @@ class HBNBCommand(cmd.Cmd):
         Define custom methods with no command prefix
         """
 
-        # Define the available methods
-        method_list = ["all", "count", "show", "destroy", "update"]
-
-        #--------------Initialisations------------------
+        # --------------Initialisations------------------
         # Initialise the needed variables
         class_name = ""
         obj_id = ""
@@ -304,68 +300,69 @@ class HBNBCommand(cmd.Cmd):
         if arg_len != 0:
             args = args_in_list[0]
             # Split them
-            #args = args.replace('"', "")
             args = args.split(", ")
             args_num = len(args)
-            print(args)
-            print(args_num)
 
-        if args_num >= 1:
-            obj_id = args[0].replace('"', "")
-
+            if args_num >= 1:
+                obj_id = args[0].replace('"', "")
 
         # ------------Execution---------------
         # Execute on the given class the given method
-        if method in method_list:
-            if method == "count":
-                self.do_count(class_name)
-            elif method in ("show", "destroy"):
-                #if obj_id:
-                args = f'{class_name} {obj_id}'
-                #else:
-                    #args = f'{class_name}'
-                if method == "show":
-                    self.do_show(args)
-                else:
-                    self.do_destroy(args)
-            elif method == "update":
-                update_dict_list = re.findall(r'\{(.+?)\}', method_args)
-                if update_dict_list:
-                    update_dict = update_dict_list[0]
-                    print(update_dict)
-                    # Split the content of the dictionary by key/value
-                    update_dict = update_dict.split(",")
-                    print(update_dict)
-                    # Get the number of attributes in the dict
-                    dict_len = len(update_dict)
+        if method == "count":
+            self.do_count(class_name)
+        elif method in ("show", "destroy"):
 
-                    turn = dict_len
-                    index = 0
-                    while(turn > 0 and index < dict_len):
-                        # Get the key-value pair
-                        key_value = update_dict[index]
-                        # Split them
-                        key_value = key_value.split(": ")
+            args = f'{class_name} {obj_id}'
 
-                        key = key_value[0]
-                        value = key_value[1]
+            if method == "show":
+                self.do_show(args)
+            else:
+                self.do_destroy(args)
+        elif method == "update":
+            update_dict_list = re.findall(r'\{(.+?)\}', method_args)
+            if update_dict_list:
+                update_dict = update_dict_list[0]
+                # Split the content of the dictionary by key/value
+                update_dict = update_dict.split(",")
+                # Get the number of attributes in the dict
+                dict_len = len(update_dict)
 
-                        attr_key = key.replace("'", "")
-                        attr_value = value.replace("'", "")
+                turn = dict_len
+                index = 0
+                while(turn > 0 and index < dict_len):
+                    # Get the key-value pair
+                    key_value = update_dict[index]
+                    # Split them
+                    key_value = key_value.split(": ")
 
-                        args = f'{class_name} {obj_id} {attr_key} {attr_value}'
-                        self.do_update(args)
-                        turn -= 1
-                        index += 1
-                else:
-                    if len(args) >= 2:
-                        attr_key = args[1].replace("'", "")
-                    if len(args) >= 3:
-                        attr_value = args[2].replace("'", "")
+                    key = ""
+                    value = ""
+
+                    # Confirm if valid key-value pair is input
+                    if key_value:
+                        if key_value[0]:
+                            key = key_value[0]
+                        if len(key_value) > 1:
+                            value = key_value[1]
+
+                    attr_key = key.replace("'", "")
+                    attr_value = value.replace("'", "")
+
                     args = f'{class_name} {obj_id} {attr_key} {attr_value}'
                     self.do_update(args)
+
+                    turn -= 1
+                    index += 1
             else:
-                super().default(line)
+                if len(args) >= 2:
+                    attr_key = args[1].replace("'", "")
+                if len(args) >= 3:
+                    attr_value = args[2].replace("'", "")
+
+                args = f'{class_name} {obj_id} {attr_key} {attr_value}'
+                self.do_update(args)
+        else:
+            super().default(line)
 
 
 if __name__ == '__main__':
