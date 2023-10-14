@@ -6,6 +6,7 @@ command interpreter.
 
 """
 import cmd
+import re
 import shlex
 from models import storage
 from models.base_model import BaseModel
@@ -51,9 +52,12 @@ class HBNBCommand(cmd.Cmd):
         """Creates a new instance of BaseModel,
         saves it (to the JSON file) and prints the id
 
+        SYNOPSIS:
+            create <class name>
+
         Example:
             `(hbnb) create BaseModel`
-
+            <id>
         """
         class_list = HBNBCommand.__class_list
         class_name = line
@@ -72,9 +76,12 @@ class HBNBCommand(cmd.Cmd):
         """Prints the string representation of an instance
         based on the class name and `id`.
 
+        SYNOPSIS:
+            show <class name> <id>
+            <class name>.show(<id>)
+
         Example:
             `(hbnb) show BaseModel 1234-1234-1234`
-
         """
         # Get objects dictionary in the form { <BaseModel.id>=<obj>,... }
         all_objs = storage.all()
@@ -108,9 +115,12 @@ class HBNBCommand(cmd.Cmd):
         """Deletes an instance based on the class name and
         `id`. Then save the change into the JSON file
 
+        SYNOPSIS:
+            destroy <class name> <id>
+            <class name>.destroy(<id>)
+
         Example:
             `(hbnb) destroy BaseModel 1234-1234-1234`
-
         """
         # Get objects dictionary in the form { <BaseModel.id>=<obj>,... }
         all_objs = storage.all()
@@ -143,12 +153,16 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, line):
         """Prints all string representation of all instances,
-        based or not on the class name
+        based or not on the class name.
+
+        SYNOPSIS:
+            all
+            all <class name>
+            <class name>.all()
 
         Example:
            `(hbnb) all BaseModel` or all User
            `(hbnb) all`
-
         """
         # Get objects dictionary in the form { <BaseModel.id>=<obj>,... }
         all_objs = storage.all()
@@ -184,6 +198,8 @@ class HBNBCommand(cmd.Cmd):
 
     SYPNOSIS:
         update <class_name> <obj_id> <attr_name> <attr_value>
+        <class name>.update(<id>, <attribute name>, <attribute value>)
+        <class name>.update(<id>, <dictionary representation>)
 
     Example:
         `(hbnb) update BaseModel 1234-1234 email "airbnb@mail"`
@@ -251,6 +267,138 @@ class HBNBCommand(cmd.Cmd):
             # Update/set the attribute with the new value
             setattr(obj, attr_name, attr_value)
             obj.save()
+
+    def do_count(self, line):
+        """
+        Counts the number of objects that is present in storage
+        from a particular class.
+
+        SYNOPSIS:
+            count <class name>
+            <class name>.count()
+
+        Example:
+            (hbhb) count User
+            3
+            (hbnb) User.count()
+            3
+        """
+        class_name = line
+        if class_name == "":
+            return
+
+        all_objs = storage.all()
+
+        count = 0
+        for obj in all_objs.values():
+            if class_name == obj.__class__.__name__:
+                count += 1
+
+        print(count)
+
+    def default(self, line):
+        """
+        Define custom methods with no command prefix
+
+        The custom commands are:
+            - <class name>.count()
+            - <class name>.show(<id>)
+            - <class name>.destroy(<id>)
+            - <class name>.update(<id>, <attribute name>, <attribute value>)
+            - <class name>.update(<id>, <dictionary representation>)
+        """
+
+        # --------------Initialisations------------------
+        # Initialise the needed variables
+        class_name = ""
+        obj_id = ""
+        attr_key = ""
+        attr_value = ""
+        args = ""
+
+        # ----------Parsing-------------
+        # Get the class name, the method and the passed argument(s) if any
+        if "." in line:
+            class_name, method_args = line.split('.')
+        else:
+            return super().default(line)
+
+        method = re.findall(r'(^.+?)\(', method_args)
+        # Get method as string
+        if method:
+            method = method[0]
+        else:
+            return super().default(line)
+
+        args_in_list = re.findall(r'\((.+?)\)', method_args)
+        # Get the arguments in the return list as a set of strings
+        arg_len = len(args_in_list)
+        if arg_len != 0:
+            args = args_in_list[0]
+            # Split them
+            args = args.split(", ")
+            args_num = len(args)
+
+            if args_num >= 1:
+                obj_id = args[0].replace('"', "")
+
+        # ------------Execution---------------
+        # Execute on the given class the given method
+        if method == "count":
+            self.do_count(class_name)
+        elif method in ("show", "destroy"):
+
+            args = f'{class_name} {obj_id}'
+
+            if method == "show":
+                self.do_show(args)
+            else:
+                self.do_destroy(args)
+        elif method == "update":
+            update_dict_list = re.findall(r'\{(.+?)\}', method_args)
+            if update_dict_list:
+                update_dict = update_dict_list[0]
+                # Split the content of the dictionary by key/value
+                update_dict = update_dict.split(",")
+                # Get the number of attributes in the dict
+                dict_len = len(update_dict)
+
+                turn = dict_len
+                index = 0
+                while(turn > 0 and index < dict_len):
+                    # Get the key-value pair
+                    key_value = update_dict[index]
+                    # Split them
+                    key_value = key_value.split(": ")
+
+                    key = ""
+                    value = ""
+
+                    # Confirm if valid key-value pair is input
+                    if key_value:
+                        if key_value[0]:
+                            key = key_value[0]
+                        if len(key_value) > 1:
+                            value = key_value[1]
+
+                    attr_key = key.replace("'", "")
+                    attr_value = value.replace("'", "")
+
+                    args = f'{class_name} {obj_id} {attr_key} {attr_value}'
+                    self.do_update(args)
+
+                    turn -= 1
+                    index += 1
+            else:
+                if len(args) >= 2:
+                    attr_key = args[1].replace("'", "")
+                if len(args) >= 3:
+                    attr_value = args[2].replace("'", "")
+
+                args = f'{class_name} {obj_id} {attr_key} {attr_value}'
+                self.do_update(args)
+        else:
+            super().default(line)
 
 
 if __name__ == '__main__':
