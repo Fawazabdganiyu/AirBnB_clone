@@ -6,6 +6,7 @@ command interpreter.
 
 """
 import cmd
+import re
 import shlex
 from models import storage
 from models.base_model import BaseModel
@@ -53,7 +54,6 @@ class HBNBCommand(cmd.Cmd):
 
         Example:
             `(hbnb) create BaseModel`
-
         """
         class_list = HBNBCommand.__class_list
         class_name = line
@@ -74,7 +74,6 @@ class HBNBCommand(cmd.Cmd):
 
         Example:
             `(hbnb) show BaseModel 1234-1234-1234`
-
         """
         # Get objects dictionary in the form { <BaseModel.id>=<obj>,... }
         all_objs = storage.all()
@@ -110,7 +109,6 @@ class HBNBCommand(cmd.Cmd):
 
         Example:
             `(hbnb) destroy BaseModel 1234-1234-1234`
-
         """
         # Get objects dictionary in the form { <BaseModel.id>=<obj>,... }
         all_objs = storage.all()
@@ -148,7 +146,6 @@ class HBNBCommand(cmd.Cmd):
         Example:
            `(hbnb) all BaseModel` or all User
            `(hbnb) all`
-
         """
         # Get objects dictionary in the form { <BaseModel.id>=<obj>,... }
         all_objs = storage.all()
@@ -251,6 +248,103 @@ class HBNBCommand(cmd.Cmd):
             # Update/set the attribute with the new value
             setattr(obj, attr_name, attr_value)
             obj.save()
+
+
+    def do_count(self, line):
+        """
+        Counts the number of objects that is present in storage
+        from a particular class
+        """
+        class_name = line
+        if class_name == "":
+            return
+
+        all_objs = storage.all()
+
+        count = 0
+        for obj in all_objs.values():
+            if class_name == obj.__class__.__name__:
+                count += 1
+
+        print(count)
+
+    def default(self, line):
+        """
+        Define custom methods with no command prefix
+        """
+
+        # Define the available methods
+        method_list = ["all", "count", "show", "destroy", "update"]
+
+        # Assign the needed variables
+        class_name = ""
+        obj_id = ""
+        attr_key = ""
+        attr_value = ""
+
+        # ----------Parsing-------------
+        # Get the class name, the method and the passed argument(s) if any
+        if "." in line:
+            class_name, method_args = line.split('.')
+        else:
+            return super().default(line)
+
+        method = re.findall(r'(^.+)\(', method_args)
+        # Get method as string
+        if method:
+            method = method[0]
+        else:
+            return super().default(line)
+
+        args_in_list = re.findall(r'\((.+)\)', method_args)
+        # Get the arguments in the return list as a set of strings
+        arg_len = len(args_in_list)
+        if arg_len != 0:
+            args = args_in_list[0]
+            # Split them
+            #args = args.replace('"', "")
+            args = args.split(", ")
+            args_num = len(args)
+            print(args)
+            print(args_num)
+
+        if args_num >= 3:
+            attr_key = args[1].replace('"', "")
+            attr_value = args[2].replace('"', "")
+        if args_num > 3:
+            # Extract the dictionary
+            update_dict = re.findall(r'', )
+
+        if method in ("show", "destroy") and arg_len != 0:
+            obj_id = args[0].replace('"', "")
+
+
+        # ------------Execution---------------
+        # Execute on the given class the given method
+        if method in method_list:
+            if method == "count":
+                self.do_count(class_name)
+            elif method in ("show", "destroy"):
+                #if obj_id:
+                args = f'{class_name} {obj_id}'
+                #else:
+                    #args = f'{class_name}'
+                self.do_show(args)
+            elif method == "update":
+                turns = args_num - 1
+                while(turns <= args_num and index <= args_num):
+                    args = f'{class_name} {obj_id} {attr_key} {attr_value}'
+                    self.do_update(args)
+                    try:
+                        attr_key = args[index].replace('"', "")
+                        index += 1
+                        attr_value = args[index].replace('"', "")
+                        index += 1
+                        turns += 2
+                    except IndexError:
+                        pass
+                else:
+                    super().default(line)
 
 
 if __name__ == '__main__':
