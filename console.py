@@ -52,8 +52,12 @@ class HBNBCommand(cmd.Cmd):
         """Creates a new instance of BaseModel,
         saves it (to the JSON file) and prints the id
 
+        SYNOPSIS:
+            create <class name>
+
         Example:
             `(hbnb) create BaseModel`
+            <id>
         """
         class_list = HBNBCommand.__class_list
         class_name = line
@@ -71,6 +75,10 @@ class HBNBCommand(cmd.Cmd):
     def do_show(self, line):
         """Prints the string representation of an instance
         based on the class name and `id`.
+
+        SYNOPSIS:
+            show <class name> <id>
+            <class name>.show(<id>)
 
         Example:
             `(hbnb) show BaseModel 1234-1234-1234`
@@ -107,6 +115,10 @@ class HBNBCommand(cmd.Cmd):
         """Deletes an instance based on the class name and
         `id`. Then save the change into the JSON file
 
+        SYNOPSIS:
+            destroy <class name> <id>
+            <class name>.destroy(<id>)
+
         Example:
             `(hbnb) destroy BaseModel 1234-1234-1234`
         """
@@ -141,7 +153,12 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, line):
         """Prints all string representation of all instances,
-        based or not on the class name
+        based or not on the class name.
+
+        SYNOPSIS:
+            all
+            all <class name>
+            <class name>.all()
 
         Example:
            `(hbnb) all BaseModel` or all User
@@ -181,6 +198,8 @@ class HBNBCommand(cmd.Cmd):
 
     SYPNOSIS:
         update <class_name> <obj_id> <attr_name> <attr_value>
+        <class name>.update(<id>, <attribute name>, <attribute value>)
+        <class name>.update(<id>, <dictionary representation>)
 
     Example:
         `(hbnb) update BaseModel 1234-1234 email "airbnb@mail"`
@@ -252,7 +271,17 @@ class HBNBCommand(cmd.Cmd):
     def do_count(self, line):
         """
         Counts the number of objects that is present in storage
-        from a particular class
+        from a particular class.
+
+        SYNOPSIS:
+            count <class name>
+            <class name>.count()
+
+        Example:
+            (hbhb) count User
+            3
+            (hbnb) User.count()
+            3
         """
         class_name = line
         if class_name == "":
@@ -270,6 +299,13 @@ class HBNBCommand(cmd.Cmd):
     def default(self, line):
         """
         Define custom methods with no command prefix
+
+        The custom commands are:
+            - <class name>.count()
+            - <class name>.show(<id>)
+            - <class name>.destroy(<id>)
+            - <class name>.update(<id>, <attribute name>, <attribute value>)
+            - <class name>.update(<id>, <dictionary representation>)
         """
 
         # --------------Initialisations------------------
