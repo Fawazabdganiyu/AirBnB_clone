@@ -96,7 +96,7 @@ class HBNBCommand(cmd.Cmd):
 
         if args_num >= 1:
             obj_class_name = args[0]
-        if args_num == 2:
+        if args_num >= 2:
             obj_id = args[1]
 
         if obj_class_name == "":
@@ -136,7 +136,7 @@ class HBNBCommand(cmd.Cmd):
 
         if args_num >= 1:
             obj_class_name = args[0]
-        if args_num == 2:
+        if args_num >= 2:
             obj_id = args[1]
 
         if obj_class_name == "":
@@ -255,7 +255,7 @@ class HBNBCommand(cmd.Cmd):
             obj = all_objs[obj_key]
 
             # Test for string
-            if attr_value.isalpha():
+            if not attr_value.isdigit():
                 pass
             # Test for integers
             elif attr_value.isdecimal():
