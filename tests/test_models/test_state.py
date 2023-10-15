@@ -7,6 +7,7 @@ Description: Provides a test suite for the `State` class located inside
 import unittest
 from models.state import State
 from models.base_model import BaseModel
+from models.__init__ import storage
 
 
 class TestStateClass(unittest.TestCase):
@@ -44,3 +45,23 @@ class TestStateClass(unittest.TestCase):
         self.assertTrue(issubclass(State, BaseModel))
         self.assertTrue(issubclass(State, BaseModel))
         self.assertTrue(issubclass(State, BaseModel))
+
+    def test_state_attribute(self):
+        """
+        Test that the `state` class has its attributes
+        """
+        kaduna = State()
+
+        self.assertIn("name", dir(kaduna))
+
+    def test_state_has_BaseModels_methods(self):
+        """
+        Test that `state` has all BaseModel's method
+        """
+        state = State()
+
+        self.assertIn("created_at", dir(state))
+        self.assertIn("updated_at", dir(state))
+        self.assertIn("save", dir(state))
+        self.assertIn("id", dir(state))
+        self.assertIn("to_dict", dir(state))
