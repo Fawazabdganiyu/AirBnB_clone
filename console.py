@@ -366,7 +366,7 @@ class HBNBCommand(cmd.Cmd):
 
                 turn = dict_len
                 index = 0
-                while(turn > 0 and index < dict_len):
+                while (turn > 0 and index < dict_len):
                     # Get the key-value pair
                     key_value = update_dict[index]
                     # Split them
