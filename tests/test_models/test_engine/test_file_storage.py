@@ -44,7 +44,7 @@ class TestFileStorage(unittest.TestCase):
 
         # Test that the objects stored in the __objects dict are not dict
         for obj in dict_retval.values():
-                self.assertNotIsInstance(obj, dict)
+            self.assertNotIsInstance(obj, dict)
 
     def test_all_no_arg(self):
         """
@@ -150,7 +150,7 @@ class TestFileStorage(unittest.TestCase):
         Testcase to check if the FileStorage linker-variable exist
         """
         self.assertIsNotNone(storage)
-    
+
     def test_storage_is_FileStorage_instance(self):
         """
         Tests to make sure `storage` variable is an instance of FileStorage
