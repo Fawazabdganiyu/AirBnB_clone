@@ -7,6 +7,7 @@ import unittest
 from models.base_model import BaseModel
 from datetime import datetime
 
+
 class TestBaseModel(unittest.TestCase):
     """A definition of `TestBaseModel` that inherites from `TestCase`
     """
