@@ -38,10 +38,6 @@ class TestStateClass(unittest.TestCase):
         """
         Test that the State class inherited from the BaseModel class
         """
-        state1 = State()
-        state2 = State()
-        state3 = State()
-
         self.assertTrue(issubclass(State, BaseModel))
         self.assertTrue(issubclass(State, BaseModel))
         self.assertTrue(issubclass(State, BaseModel))
@@ -53,6 +49,14 @@ class TestStateClass(unittest.TestCase):
         kaduna = State()
 
         self.assertIn("name", dir(kaduna))
+
+    def test_state_attributes_test(self):
+        """
+        Test that the `state` attributes is of the right type
+        """
+        state = State()
+
+        self.assertTrue(isinstance(state.name, str))
 
     def test_state_has_BaseModels_methods(self):
         """
