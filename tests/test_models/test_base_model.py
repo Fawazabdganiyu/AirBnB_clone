@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """
 Module Name: tests/test_models/test_base_model.py
 Description: This module tests the class `BaseModel` in the module.
