@@ -19,27 +19,26 @@ class TestFileStorage(unittest.TestCase):
         `FileStorage` class
     """
     def setUp(self):
-        self.storage_obj = FileStorage()
+        self.fs = FileStorage()
 
     def test_is_instance(self):
         """
         Test if an object is an instance of FileStorage
         """
-        self.assertIsInstance(self.storage_obj, FileStorage)
+        self.assertIsInstance(self.fs, FileStorage)
 
-    @unittest.expectedFailure
     def test_class_attributes(self):
         """
         Test that its class attributes are private
         """
-        self.assertTrue(hasattr(self.storage_obj, "__file_path"))
-        self.assertTrue(hasattr(self.storage_obj, "__objects"))
+        self.assertTrue(hasattr(self.fs, "_FileStorage__file_path"))
+        self.assertTrue(hasattr(self.fs, "_FileStorage__objects"))
 
     def test_method_all(self):
         """
         Testcase for the `all` method for its functionality
         """
-        dict_retval = self.storage_obj.all()
+        dict_retval = self.fs.all()
         self.assertIsInstance(dict_retval, dict)
 
         # Test that the objects stored in the __objects dict are not dict
@@ -51,7 +50,7 @@ class TestFileStorage(unittest.TestCase):
         Test that method `all()` takes no argument
         """
         with self.assertRaises(TypeError):
-            self.storage_obj.all('User')
+            self.fs.all('User')
 
     def test_method_new(self):
         """
@@ -60,8 +59,8 @@ class TestFileStorage(unittest.TestCase):
         new_obj = BaseModel()
         new_obj_key = f"{new_obj.__class__.__name__}.{new_obj.id}"
 
-        self.storage_obj.new(new_obj)
-        all_objs = self.storage_obj.all()
+        self.fs.new(new_obj)
+        all_objs = self.fs.all()
 
         self.assertIn(new_obj_key, all_objs.keys())
         self.assertEqual(new_obj, all_objs[new_obj_key])
@@ -71,41 +70,42 @@ class TestFileStorage(unittest.TestCase):
         Test that method `new()` takes one argument
         """
         with self.assertRaises(TypeError):
-            self.storage_obj.new()
+            self.fs.new()
 
         with self.assertRaises(TypeError):
             obj1 = BaseModel()
             obj2 = User()
-            self.storage_obj.new(obj1, obj2)
+            self.fs.new(obj1, obj2)
 
     def test_method_save(self):
         """
         Testcase for the `save` method, testing its functionalities
         """
         # Create a user instance
-        user_obj = User()
-        created_at = user_obj.created_at
+        usr = User()
+        usr_key = f'User.{usr.id}'
 
+        created = usr.created_at
+
+        usr.name = "John Smith"
+        usr.age = 98
         # Save this user along with its time of updation
-        user_obj.save()
+        usr.save()
 
         # Get and compare its updation time with its creation time
-        updated_at = user_obj.updated_at
-        self.assertNotEqual(created_at, updated_at)
+        updated = usr.updated_at
+        self.assertNotEqual(created, updated)
 
         # Get from JSON file
         all_objs = {}
-        try:
-            with open("file.json", mode="r", encoding="utf-8") as FILE:
-                all_objs_str = FILE.read()
-                all_objs = json.load(FILE)
-        except json.decoder.JSONDecodeError:
-            pass
+        with open("file.json", mode="r", encoding="utf-8") as f:
+            all_objs = json.load(f)
 
-        # Confirm that the content save to FILE is a JSON string
-        self.assertIsInstance(all_objs_str, str)
+        # Test that the same time of update is save and accessed
+        usr_dict = all_objs[usr_key]
+        self.assertEqual(updated.isoformat(), usr_dict['updated_at'])
 
-        # Confirm that the content saved to FILE is a dict
+        # Confirm that the content saved to `file.json` is retrived as a dict
         self.assertIsInstance(all_objs, dict)
 
     def test_save_no_arg(self):
@@ -116,22 +116,22 @@ class TestFileStorage(unittest.TestCase):
         eric = User()
 
         with self.assertRaises(TypeError):
-            self.storage_obj.save(john)
+            self.fs.save(john)
 
         with self.assertRaises(TypeError):
-            self.storage_obj.save(john, eric)
+            self.fs.save(john, eric)
 
     def test_method_reload(self):
         """
         Testcase for the `reload` method, testing its functionalities
         """
-        before_reload = self.storage_obj.all()
+        before_reload = self.fs.all()
 
         new_obj = User()
-        self.storage_obj.save()  # Save the new object in json file
+        self.fs.save()  # Save the new object in json file
 
-        self.storage_obj.reload()
-        after_reload = self.storage_obj.all()
+        self.fs.reload()
+        after_reload = self.fs.all()
 
         self.assertNotEqual(before_reload, after_reload)
 
@@ -140,10 +140,10 @@ class TestFileStorage(unittest.TestCase):
         Test that the `reload()` method takes no argument
         """
         with self.assertRaises(TypeError):
-            self.storage_obj.reload('User')
+            self.fs.reload('User')
 
         with self.assertRaises(TypeError):
-            self.storage_obj.reload('User', 'City')
+            self.fs.reload('User', 'City')
 
     def test_storage_variable(self):
         """
@@ -167,4 +167,4 @@ class TestFileStorage(unittest.TestCase):
         self.assertIn('reload', dir(storage))
 
     def tearDown(self):
-        del self.storage_obj
+        del self.fs
