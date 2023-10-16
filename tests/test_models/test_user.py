@@ -52,11 +52,23 @@ class TestUserClass(unittest.TestCase):
         """
         self.assertIn("first_name", dir(self.user))
 
+    def test_first_name_type(self):
+        """
+        Test that first name is a string
+        """
+        self.assertIsInstance(self.user.first_name, str)
+
     def test_user_attribute_last_name_exist(self):
         """
         Test that the `User` class attribute ``last_name`` exists
         """
         self.assertIn("last_name", dir(self.user))
+
+    def test_last_name_type(self):
+        """
+        Test that last_name is a string
+        """
+        self.assertIsInstance(self.user.last_name, str)
 
     def test_user_attribute_email_exist(self):
         """
