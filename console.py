@@ -347,6 +347,8 @@ class HBNBCommand(cmd.Cmd):
         # Execute on the given class the given method
         if method == "count":
             self.do_count(class_name)
+        elif method == "all":
+            self.do_all(class_name)
         elif method in ("show", "destroy"):
 
             args = f'{class_name} {obj_id}'
