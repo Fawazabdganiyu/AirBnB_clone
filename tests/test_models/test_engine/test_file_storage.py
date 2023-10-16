@@ -85,7 +85,6 @@ class TestFileStorage(unittest.TestCase):
         """
         # Create a user instance
         bm = BaseModel()
-        bm_key = f'BaseModel.{bm.id}'
 
         created = bm.created_at
 
@@ -98,8 +97,16 @@ class TestFileStorage(unittest.TestCase):
         updated = bm.updated_at
         self.assertNotEqual(created, updated)
 
+    def test_storage_save(self):
+        """
+        Test that storage save(self) is called in BaseModel
+        """
+        bm = BaseModel()
+        bm.name = "Test Model"
+        bm_key = f'BaseModel.{bm.id}'
+        bm.save()
+
         # Get from JSON file
-        all_objs = {}
         with open("file.json", mode="r", encoding="utf-8") as f:
             all_objs = json.load(f)
 
