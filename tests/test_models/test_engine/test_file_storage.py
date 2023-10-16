@@ -9,7 +9,6 @@ import json
 from models.engine.file_storage import FileStorage
 from models.__init__ import storage
 from models.base_model import BaseModel
-from models.user import User
 
 
 class TestFileStorage(unittest.TestCase):
@@ -33,6 +32,9 @@ class TestFileStorage(unittest.TestCase):
         """
         self.assertTrue(hasattr(self.fs, "_FileStorage__file_path"))
         self.assertTrue(hasattr(self.fs, "_FileStorage__objects"))
+
+        self.assertIsInstance(FileStorage._FileStorage__file_path, str)
+        self.assertIsInstance(FileStorage._FileStorage__objects, dict)
 
     def test_method_all(self):
         """
@@ -74,7 +76,7 @@ class TestFileStorage(unittest.TestCase):
 
         with self.assertRaises(TypeError):
             obj1 = BaseModel()
-            obj2 = User()
+            obj2 = BaseModel()
             self.fs.new(obj1, obj2)
 
     def test_method_save(self):
@@ -82,18 +84,18 @@ class TestFileStorage(unittest.TestCase):
         Testcase for the `save` method, testing its functionalities
         """
         # Create a user instance
-        usr = User()
-        usr_key = f'User.{usr.id}'
+        bm = BaseModel()
+        bm_key = f'BaseModel.{bm.id}'
 
-        created = usr.created_at
+        created = bm.created_at
 
-        usr.name = "John Smith"
-        usr.age = 98
+        bm.name = "John Smith"
+        bm.age = 98
         # Save this user along with its time of updation
-        usr.save()
+        bm.save()
 
         # Get and compare its updation time with its creation time
-        updated = usr.updated_at
+        updated = bm.updated_at
         self.assertNotEqual(created, updated)
 
         # Get from JSON file
@@ -102,8 +104,8 @@ class TestFileStorage(unittest.TestCase):
             all_objs = json.load(f)
 
         # Test that the same time of update is save and accessed
-        usr_dict = all_objs[usr_key]
-        self.assertEqual(updated.isoformat(), usr_dict['updated_at'])
+        bm_dict = all_objs[bm_key]
+        self.assertEqual(updated.isoformat(), bm_dict['updated_at'])
 
         # Confirm that the content saved to `file.json` is retrived as a dict
         self.assertIsInstance(all_objs, dict)
@@ -112,14 +114,14 @@ class TestFileStorage(unittest.TestCase):
         """
         Test that the `save()` method takes no argument
         """
-        john = User()
-        eric = User()
+        bm1 = BaseModel()
+        bm2 = BaseModel()
 
         with self.assertRaises(TypeError):
-            self.fs.save(john)
+            self.fs.save(bm1)
 
         with self.assertRaises(TypeError):
-            self.fs.save(john, eric)
+            self.fs.save(bm1, bm2)
 
     def test_method_reload(self):
         """
@@ -127,8 +129,8 @@ class TestFileStorage(unittest.TestCase):
         """
         before_reload = self.fs.all()
 
-        new_obj = User()
-        self.fs.save()  # Save the new object in json file
+        bm = BaseModel()
+        bm.save()  # Save the new object in json file
 
         self.fs.reload()
         after_reload = self.fs.all()
