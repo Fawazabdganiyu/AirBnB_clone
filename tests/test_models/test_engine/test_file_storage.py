@@ -7,7 +7,7 @@ Description: Contains test suite for the file_storage module
 import unittest
 import json
 from models.engine.file_storage import FileStorage
-from models.__init__ import storage
+from models import storage
 from models.base_model import BaseModel
 
 
@@ -104,8 +104,8 @@ class TestFileStorage(unittest.TestCase):
         bm = BaseModel()
         bm.name = "Test Model"
         bm_key = f'BaseModel.{bm.id}'
-        bm.save()
-
+        storage.new(bm)
+        storage.save()
         # Get from JSON file
         with open("file.json", mode="r", encoding="utf-8") as f:
             all_objs = json.load(f)
