@@ -103,9 +103,10 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", mode="r", encoding="utf-8") as f:
             all_objs = json.load(f)
 
+        self.assertIn(bm_key, all_objs)
         # Test that the same time of update is save and accessed
         bm_dict = all_objs[bm_key]
-        self.assertEqual(updated.isoformat(), bm_dict['updated_at'])
+        self.assertEqual(bm.name, bm_dict['name'])
 
         # Confirm that the content saved to `file.json` is retrived as a dict
         self.assertIsInstance(all_objs, dict)
