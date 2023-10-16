@@ -43,10 +43,10 @@ class BaseModel:
         Updates objects and the public instance attribute `updated_at`
         with the current datetime of updation.
         """
-        # Save the created/updated objects
-        models.storage.save()
         # Get the time of updation
         self.updated_at = datetime.now()
+        # Save the object updated attribute(s) to file
+        models.storage.save()
 
     def to_dict(self):
         """ Returns the dictionary representation of an instance """
