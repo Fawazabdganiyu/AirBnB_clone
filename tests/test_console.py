@@ -84,4 +84,5 @@ class TestConsole(unittest.TestCase):
         """
         output = ""
         with patch('sys.stdout', new=StringIO()) as f:
-            self.assertEqual(output, f.getvalue().strip())
+            HBNBCommand().onecmd("")
+        self.assertEqual(output, f.getvalue().strip())
