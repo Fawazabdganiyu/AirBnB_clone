@@ -1,0 +1,58 @@
+/*
+=======================
+Filters
+=======================
+*/
+
+.filters {
+    background-color: white;
+    height: 70px;
+    width: 100%;
+    border: 1px solid #DDDDDD;
+    border-radius: 4px;
+}
+
+.filters button {
+    font-size: 18px;
+    background-color: #FF5A5F;
+    color: #FFFFFF;
+    height: 48px;
+    width: 20%;
+    border: 0;
+    border-radius: 4px;
+    display: inline-block;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    transform: translateY(-50%); /* Correct vertical centering */
+    right: 30px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.filters button:hover {
+    opacity: 0.9;
+}
+
+.locations,
+.amenities {
+    display: inline-block;
+    text-align: left-center;
+    padding: 1% 3%;
+    line-height: 1px;
+    height: 100%;
+    width: 25%;
+}
+
+.locations {
+    border-right: 1px solid #DDDDDD;
+}
+
+.filters h3 {
+    font-weight: 600;
+}
+
+.filters h4 {
+    font-weight: 400;
+    font-size: 14px;
+}
