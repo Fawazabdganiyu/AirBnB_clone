@@ -1,0 +1,35 @@
+/*
+=======================
+Filters
+=======================
+*/
+
+.filters {
+    background-color: white;
+    height: 70px;
+    width: 100%;
+    border: 1px solid #DDDDDD;
+    border-radius: 4px;
+}
+
+button {
+    font-size: 18px;
+    background-color: #FF5A5F;
+    color: #FFFFFF;
+    height: 48px;
+    width: 20%;
+    border: 0;
+    border-radius: 4px;
+    display: inline-block;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    transform: translateY(-50%); /* Correct vertical centering */
+    right: 30px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+button:hover {
+    opacity: 0.9;
+}
