@@ -21,11 +21,9 @@ Filters
     border: 0;
     border-radius: 4px;
     display: inline-block;
-    position: absolute;
+    float: right;
     text-align: center;
-    top: 50%;
-    transform: translateY(-50%); /* Correct vertical centering */
-    right: 30px;
+    margin: 10px 30px;
     cursor: pointer;
     transition: opacity 0.3s;
 }
