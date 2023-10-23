@@ -52,6 +52,7 @@ Filters
 }
 
 .filters h3 {
+    padding-top: 10px; /* Added to center vertically but creates another space betwween the dropdown */
     font-weight: 600;
 }
 
