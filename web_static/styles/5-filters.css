@@ -37,7 +37,6 @@ Filters
 .locations,
 .amenities {
     display: inline-block;
-    text-align: left-center;
     padding: 1% 3%;
     line-height: 1px;
     height: 100%;
