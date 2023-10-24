@@ -1,0 +1,16 @@
+/*
+=======================
+Header
+=======================
+*/
+
+header {
+    background-color: #FFFFFF;
+    height: 70px;
+    width: 100%;
+    border: 1px solid #CCCCCC;
+    background-image: url('../images/logo.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: 20px;
+}
